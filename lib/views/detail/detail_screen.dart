@@ -16,7 +16,13 @@ class DetailScreen extends GetView<DetailController> {
 
     return Obx(() {
       final isDarkMode = themeController.themeMode.value == ThemeMode.dark;
-      final country = controller.country;
+      final country = controller.country.value;
+
+      if (country == null) {
+        return const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        );
+      }
 
       return Scaffold(
         appBar: CustomAppBar(
@@ -47,7 +53,7 @@ class DetailScreen extends GetView<DetailController> {
                         : AppColors.lightPrimary,
                     foregroundColor:
                     isDarkMode ? AppColors.darkText : AppColors.lightText,
-                    elevation: 1,
+                    elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(2),
                     ),
@@ -61,16 +67,20 @@ class DetailScreen extends GetView<DetailController> {
                 const SizedBox(height: 50),
 
                 Hero(
-                  tag: country.name,
+                  tag: country.name?.common ?? country.name.toString(),
                   child: ClipRRect(
-                    child: BuildFlag( pngUrl: country.flags!.png, svgUrl: country.flags!.svg,)
+                    borderRadius: BorderRadius.circular(6),
+                    child: BuildFlag(
+                      pngUrl: country.flags!.png,
+                      svgUrl: country.flags!.svg,
+                    ),
                   ),
                 ),
 
                 const SizedBox(height: 40),
 
                 Text(
-                  country.name.common,
+                  country.name?.common ?? "-",
                   style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                     fontWeight: FontWeight.w800,
                     color: isDarkMode
@@ -81,8 +91,8 @@ class DetailScreen extends GetView<DetailController> {
 
                 const SizedBox(height: 20),
 
-                _infoRow(
-                    context, 'Native Name', country.name?.official ?? '-', isDarkMode),
+                _infoRow(context, 'Native Name',
+                    country.name?.official ?? '-', isDarkMode),
                 _infoRow(
                     context,
                     'Population',
@@ -141,16 +151,16 @@ class DetailScreen extends GetView<DetailController> {
                   children: (country.borders != null && country.borders!.isNotEmpty)
                       ? country.borders!.map((border) {
                     return Material(
-                      elevation: 1,
+                      elevation: 2,
                       color: isDarkMode
                           ? AppColors.darkPrimary
                           : AppColors.lightPrimary,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(2),
-                        side: BorderSide.none,
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8),
                         child: Text(
                           border,
                           style: TextStyle(
@@ -164,7 +174,6 @@ class DetailScreen extends GetView<DetailController> {
                   }).toList()
                       : [const Text('-')],
                 ),
-
               ],
             ),
           ),
@@ -204,4 +213,3 @@ class DetailScreen extends GetView<DetailController> {
     );
   }
 }
-

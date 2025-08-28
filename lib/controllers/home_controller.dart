@@ -21,26 +21,9 @@ class HomeController extends GetxController {
   Future<void> loadCountries() async {
     try {
       isLoading.value = true;
-      final result = await apiService.getAllCountries();
-      print("Result length: ${result.length}");
-
-
-      if (result.isNotEmpty) {
-        print(
-          "First Country: ${result.first.name.common} "
-              "| Capital: ${result.first.capital.isNotEmpty ? result.first.capital.first : '-'} "
-              "| Region: ${result.first.region}",
-        );
-      } else {
-        print("API returned empty list!");
-      }
-
+      final result = await apiService.getAllCountriesLight();
       countries.assignAll(result);
       filteredCountries.assignAll(result);
-      print("Filtered countries: ${filteredCountries.length}");
-
-    } catch (e) {
-      print("Load Countries Error: $e");
     } finally {
       isLoading.value = false;
     }

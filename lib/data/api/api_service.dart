@@ -9,21 +9,33 @@ class ApiService {
     dio.options.baseUrl = endpoint;
   }
 
-  Future<List<CountryModel>> getAllCountries() async {
+  Future<List<CountryModel>> getAllCountriesLight() async {
     try {
-      final response = await dio.get("/all");
+      final response = await dio.get(
+        "/all?fields=name,population,region,capital,flags",
+      );
       if (response.statusCode == 200) {
         final List data = response.data;
         return data.map((e) => CountryModel.fromJson(e)).toList();
-      } else {
-        return [];
       }
     } catch (e) {
-      print("API Error: $e");
-      return [];
+      print("API Error getAllCountriesLight: $e");
     }
+    return [];
   }
 
+  Future<CountryModel?> getCountryDetail(String name) async {
+    try {
+      final response = await dio.get("/name/$name?fullText=true");
+      if (response.statusCode == 200) {
+        final List data = response.data;
+        return CountryModel.fromJson(data.first);
+      }
+    } catch (e) {
+      print("API Error getCountryDetail: $e");
+    }
+    return null;
+  }
 
 
   Future<List<CountryModel>> searchByName(String name) async {

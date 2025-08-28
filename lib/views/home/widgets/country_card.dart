@@ -31,7 +31,7 @@ class CountryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Hero(
-              tag: country.name,
+              tag: country.name?.common ?? country.name.toString(),
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
                 child: BuildFlag(pngUrl: country.flags!.png, svgUrl: country.flags!.svg,)
