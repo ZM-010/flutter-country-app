@@ -8,6 +8,7 @@ class HomeController extends GetxController {
   var filteredCountries = <CountryModel>[].obs;
   var selectedRegion = Region.Unknown.obs;
   var isLoading = false.obs;
+  var searchText = ''.obs;
 
   final ApiService apiService = ApiService();
 
@@ -29,42 +30,36 @@ class HomeController extends GetxController {
   }
 
   void search(String query) {
-    if (query.isEmpty) {
-      filteredCountries.assignAll(countries);
-      return;
-    }
-
-    final lowerQuery = query.toLowerCase();
-
-    final result =
-        countries.where((country) {
-          final name = country.name?.common?.toLowerCase() ?? '';
-          return name.contains(lowerQuery);
-        }).toList();
-
-    filteredCountries.assignAll(result);
+    searchText.value = query;
+    applyFilters();
   }
 
-  Future<void> filterByRegion(Region region) async {
+  void filterByRegion(Region region) {
     selectedRegion.value = region;
-    if (region == Region.Unknown) {
-      filteredCountries.assignAll(countries);
-      return;
-    }
-    try {
-      isLoading.value = true;
-      final regionStr = region.toString().split('.').last.toLowerCase();
-      final result = await apiService.getByRegion(regionStr);
-      filteredCountries.assignAll(result);
-    } catch (e) {
-      print('Region Filter Error: $e');
-    } finally {
-      isLoading.value = false;
-    }
+    applyFilters();
   }
 
   void clearRegionFilter() {
     selectedRegion.value = Region.Unknown;
-    filteredCountries.assignAll(countries);
+    applyFilters();
+  }
+
+  void applyFilters() {
+    var list = countries.toList();
+
+    if (selectedRegion.value != Region.Unknown) {
+      final regionName = selectedRegion.value.toString().split('.').last.toLowerCase();
+      list = list.where((c) => (c.region ?? '').toLowerCase() == regionName).toList();
+    }
+
+    final query = searchText.value.trim().toLowerCase();
+    if (query.isNotEmpty) {
+      list = list.where((c) {
+        final name = c.name?.common?.toLowerCase() ?? '';
+        return name.contains(query);
+      }).toList();
+    }
+
+    filteredCountries.assignAll(list);
   }
 }
