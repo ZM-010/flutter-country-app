@@ -15,7 +15,6 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     loadCountries();
-
   }
 
   Future<void> loadCountries() async {
@@ -29,20 +28,21 @@ class HomeController extends GetxController {
     }
   }
 
-  Future<void> search(String query) async {
+  void search(String query) {
     if (query.isEmpty) {
       filteredCountries.assignAll(countries);
       return;
     }
-    try {
-      isLoading.value = true;
-      final result = await apiService.searchByName(query);
-      filteredCountries.assignAll(result);
-    } catch (e) {
-      print('Search Error: $e');
-    } finally {
-      isLoading.value = false;
-    }
+
+    final lowerQuery = query.toLowerCase();
+
+    final result =
+        countries.where((country) {
+          final name = country.name?.common?.toLowerCase() ?? '';
+          return name.contains(lowerQuery);
+        }).toList();
+
+    filteredCountries.assignAll(result);
   }
 
   Future<void> filterByRegion(Region region) async {
