@@ -1,24 +1,23 @@
-import 'package:arz8_task/controllers/home_controller.dart';
-import 'package:arz8_task/controllers/theme_controller.dart';
+import 'package:arz8_task/presentations/controllers/home_controller.dart';
+import 'package:arz8_task/presentations/controllers/theme_controller.dart';
+import 'package:arz8_task/presentations/views/home/widgets/country_card.dart';
+import 'package:arz8_task/presentations/views/home/widgets/custom_app_bar.dart';
+import 'package:arz8_task/presentations/views/home/widgets/custom_dropdown.dart';
+import 'package:arz8_task/presentations/views/home/widgets/custom_search_bar.dart';
 import 'package:arz8_task/routes/app_routes.dart';
 import 'package:arz8_task/utils/app_colors.dart';
 import 'package:arz8_task/utils/dimens.dart';
-import 'package:arz8_task/views/home/widgets/country_card.dart';
-import 'package:arz8_task/views/home/widgets/custom_app_bar.dart';
-import 'package:arz8_task/views/home/widgets/custom_dropdown.dart';
-import 'package:arz8_task/views/home/widgets/custom_search_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends GetView<HomeController> {
-  final ThemeController themeController = Get.find<ThemeController>();
-  final TextEditingController _searchController = TextEditingController();
-
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final ThemeController themeController = Get.find<ThemeController>();
+    final TextEditingController searchController = TextEditingController();
 
     return Obx(() {
       final isDarkMode = themeController.themeMode.value == ThemeMode.dark;
@@ -32,7 +31,7 @@ class HomeScreen extends GetView<HomeController> {
           child: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   vertical: 32.0,
@@ -41,8 +40,10 @@ class HomeScreen extends GetView<HomeController> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CustomSearchBar(isDarkMode: isDarkMode,
-                      controller: _searchController,),
+                    CustomSearchBar(
+                      isDarkMode: isDarkMode,
+                      controller: searchController,
+                    ),
                     const SizedBox(height: 40),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -59,11 +60,9 @@ class HomeScreen extends GetView<HomeController> {
                     const SizedBox(height: 8),
                     Obx(() {
                       if (controller.isLoading.value) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 200.0),
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 200.0),
+                          child: Center(child: CircularProgressIndicator()),
                         );
                       }
                       if (controller.filteredCountries.isEmpty) {
@@ -75,8 +74,7 @@ class HomeScreen extends GetView<HomeController> {
                               style: GoogleFonts.nunitoSans(
                                 fontSize: textSize1,
                                 fontWeight: FontWeight.w600,
-                                color:
-                                isDarkMode
+                                color: isDarkMode
                                     ? AppColors.darkText
                                     : AppColors.lightText,
                               ),

@@ -1,14 +1,16 @@
-import 'package:arz8_task/controllers/detail_controller.dart';
-import 'package:arz8_task/controllers/theme_controller.dart';
+import 'package:arz8_task/presentations/controllers/detail_controller.dart';
+import 'package:arz8_task/presentations/controllers/theme_controller.dart';
+import 'package:arz8_task/presentations/views/home/widgets/custom_app_bar.dart';
+import 'package:arz8_task/presentations/views/shared/widgets/build_flag.dart';
 import 'package:arz8_task/utils/app_colors.dart';
 import 'package:arz8_task/utils/dimens.dart';
-import 'package:arz8_task/views/home/widgets/custom_app_bar.dart';
-import 'package:arz8_task/views/shared/widgets/build_flag.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class DetailScreen extends GetView<DetailController> {
+  const DetailScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.find<ThemeController>();
@@ -18,9 +20,15 @@ class DetailScreen extends GetView<DetailController> {
       final isDarkMode = themeController.themeMode.value == ThemeMode.dark;
       final country = controller.country.value;
 
-      if (country == null) {
+      if (controller.isLoading.value) {
         return const Scaffold(
           body: Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      if (country == null) {
+        return const Scaffold(
+          body: Center(child: Text("No data")),
         );
       }
 
@@ -35,7 +43,7 @@ class DetailScreen extends GetView<DetailController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
+                // Back button
                 ElevatedButton.icon(
                   onPressed: () => Get.back(),
                   icon: Icon(
@@ -66,21 +74,23 @@ class DetailScreen extends GetView<DetailController> {
 
                 const SizedBox(height: 50),
 
+                // Flag
                 Hero(
-                  tag: country.name?.common ?? country.name.toString(),
+                  tag: country.name.common,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(6),
                     child: BuildFlag(
-                      pngUrl: country.flags!.png,
-                      svgUrl: country.flags!.svg,
+                      pngUrl: country.flags.png,
+                      svgUrl: country.flags.svg,
                     ),
                   ),
                 ),
 
                 const SizedBox(height: 40),
 
+                // Country name
                 Text(
-                  country.name?.common ?? "-",
+                  country.name.common,
                   style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                     fontWeight: FontWeight.w800,
                     color: isDarkMode
@@ -91,49 +101,43 @@ class DetailScreen extends GetView<DetailController> {
 
                 const SizedBox(height: 20),
 
-                _infoRow(context, 'Native Name',
-                    country.name?.official ?? '-', isDarkMode),
-                _infoRow(
-                    context,
-                    'Population',
-                    formatter.format(country.population ?? 0),
-                    isDarkMode),
-                _infoRow(context, 'Region', country.region ?? '-', isDarkMode),
-                _infoRow(context, 'Sub Region', country.subregion ?? '-', isDarkMode),
+                // Info rows
+                _infoRow(context, 'Native Name', country.name.official, isDarkMode),
+                _infoRow(context, 'Population',
+                    formatter.format(country.population), isDarkMode),
+                _infoRow(context, 'Region', country.region, isDarkMode),
+                _infoRow(context, 'Sub Region', country.subregion, isDarkMode),
                 _infoRow(
                   context,
                   'Capital',
-                  (country.capital != null && country.capital!.isNotEmpty)
-                      ? country.capital!.first
-                      : '-',
+                  country.capital.isNotEmpty ? country.capital.first : '-',
                   isDarkMode,
                 ),
 
                 const SizedBox(height: 40),
 
                 _infoRow(context, 'Top Level Domain',
-                    country.tld?.join(", ") ?? '-', isDarkMode),
+                    country.tld.isNotEmpty ? country.tld.join(", ") : '-', isDarkMode),
                 _infoRow(
                   context,
                   'Currencies',
-                  country.currencies != null
-                      ? country.currencies!.values
-                      .map((c) => c.name)
-                      .join(", ")
+                  country.currencies.isNotEmpty
+                      ? country.currencies.values.map((c) => c.name).join(", ")
                       : '-',
                   isDarkMode,
                 ),
                 _infoRow(
                   context,
                   'Languages',
-                  country.languages != null
-                      ? country.languages!.values.join(", ")
+                  country.languages.isNotEmpty
+                      ? country.languages.values.join(", ")
                       : '-',
                   isDarkMode,
                 ),
 
                 const SizedBox(height: 40),
 
+                // Border Countries
                 Text(
                   'Border Countries:',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -148,8 +152,8 @@ class DetailScreen extends GetView<DetailController> {
                 Wrap(
                   spacing: 12,
                   runSpacing: 12,
-                  children: (country.borders != null && country.borders!.isNotEmpty)
-                      ? country.borders!.map((border) {
+                  children: country.borders.isNotEmpty
+                      ? country.borders.map((border) {
                     return Material(
                       elevation: 2,
                       color: isDarkMode
@@ -204,7 +208,8 @@ class DetailScreen extends GetView<DetailController> {
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontSize: textSize1,
                 fontWeight: FontWeight.w300,
-                color: isDarkMode ? AppColors.darkText : AppColors.lightText,
+                color:
+                isDarkMode ? AppColors.darkText : AppColors.lightText,
               ),
             ),
           ],

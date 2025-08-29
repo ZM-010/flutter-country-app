@@ -1,6 +1,6 @@
 import 'package:arz8_task/data/models/country_model.dart';
+import 'package:arz8_task/presentations/views/shared/widgets/build_flag.dart';
 import 'package:arz8_task/utils/app_colors.dart';
-import 'package:arz8_task/views/shared/widgets/build_flag.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -13,7 +13,7 @@ class CountryCard extends StatelessWidget {
     super.key,
     required this.country,
     required this.isDarkMode,
-    required this.onTap
+    required this.onTap,
   });
 
   @override
@@ -21,7 +21,7 @@ class CountryCard extends StatelessWidget {
     final formatter = NumberFormat.decimalPattern();
 
     return GestureDetector(
-      onTap: onTap ,
+      onTap: onTap,
       child: Card(
         elevation: 0,
         margin: const EdgeInsets.symmetric(vertical: 30),
@@ -31,22 +31,25 @@ class CountryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Hero(
-              tag: country.name?.common ?? country.name.toString(),
+              tag: country.name.common,
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-                child: BuildFlag(pngUrl: country.flags!.png, svgUrl: country.flags!.svg,)
+                child: BuildFlag(
+                  pngUrl: country.flags.png,
+                  svgUrl: country.flags.svg,
+                ),
               ),
             ),
-      
+
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 50.0,horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 20),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      country.name?.common ?? '-',
+                      country.name.common,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w800,
                         color: isDarkMode
@@ -55,7 +58,7 @@ class CountryCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-      
+
                     Text.rich(
                       TextSpan(
                         text: 'Population: ',
@@ -64,13 +67,13 @@ class CountryCard extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(
-                            text: formatter.format(country.population ?? 0),
+                            text: formatter.format(country.population),
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
                       ),
                     ),
-      
+
                     Text.rich(
                       TextSpan(
                         text: 'Region: ',
@@ -79,12 +82,13 @@ class CountryCard extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(
-                            text: country.region ?? '-',
+                            text: country.region,
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
                       ),
                     ),
+
                     Text.rich(
                       TextSpan(
                         text: 'Capital: ',
@@ -93,9 +97,8 @@ class CountryCard extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(
-                            text: (country.capital != null &&
-                                country.capital!.isNotEmpty)
-                                ? country.capital!.first
+                            text: country.capital.isNotEmpty
+                                ? country.capital.first
                                 : '-',
                             style: Theme.of(context).textTheme.bodySmall,
                           ),

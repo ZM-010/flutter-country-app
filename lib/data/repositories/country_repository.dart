@@ -1,58 +1,26 @@
-import 'package:arz8_task/data/api/api_service.dart';
+import 'package:arz8_task/data/data_sources/remote/country_remote_data_source.dart';
 import 'package:arz8_task/data/models/country_model.dart';
 
-class CountryRepository {
-  final ApiService apiService;
+abstract class CountryRepository {
+  Future<List<CountryModel>> getAllCountriesLight();
+  Future<CountryModel?> getCountryDetail(String name);
+  Future<List<CountryModel>> search({String? name, String? region});
+}
 
-  CountryRepository(this.apiService);
+class CountryRepositoryImpl implements CountryRepository {
+  final CountryRemoteDataSource remoteDataSource;
 
-  Future<List<CountryModel>> getAllCountriesLight() async {
-    final response = await apiService.get(
-      "/all",
-      queryParams: {
-        "fields": "name,population,region,capital,flags",
-      },
-    );
+  CountryRepositoryImpl(this.remoteDataSource);
 
-    if (response.statusCode == 200) {
-      final List data = response.data;
-      return data.map((e) => CountryModel.fromJson(e)).toList();
-    }
-    return [];
-  }
+  @override
+  Future<List<CountryModel>> getAllCountriesLight() =>
+      remoteDataSource.getAllCountriesLight();
 
-  Future<CountryModel?> getCountryDetail(String name) async {
-    final response = await apiService.get(
-      "/name/$name",
-      queryParams: {"fullText": "true"},
-    );
+  @override
+  Future<CountryModel?> getCountryDetail(String name) =>
+      remoteDataSource.getCountryDetail(name);
 
-    if (response.statusCode == 200) {
-      final List data = response.data;
-      return CountryModel.fromJson(data.first);
-    }
-    return null;
-  }
-
-
-  Future<List<CountryModel>> searchByName(String name) async {
-    final response = await apiService.get("/name/$name");
-
-    if (response.statusCode == 200) {
-      final List data = response.data;
-      return data.map((e) => CountryModel.fromJson(e)).toList();
-    }
-    return [];
-  }
-
-
-  Future<List<CountryModel>> getByRegion(String region) async {
-    final response = await apiService.get("/region/$region");
-
-    if (response.statusCode == 200) {
-      final List data = response.data;
-      return data.map((e) => CountryModel.fromJson(e)).toList();
-    }
-    return [];
-  }
+  @override
+  Future<List<CountryModel>> search({String? name, String? region}) =>
+      remoteDataSource.searchCountries(name: name, region: region);
 }

@@ -1,4 +1,4 @@
-import 'package:arz8_task/controllers/home_controller.dart';
+import 'package:arz8_task/presentations/controllers/home_controller.dart';
 import 'package:arz8_task/utils/app_colors.dart';
 import 'package:arz8_task/utils/dimens.dart';
 import 'package:flutter/material.dart';

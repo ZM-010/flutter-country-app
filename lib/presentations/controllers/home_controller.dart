@@ -1,18 +1,19 @@
 import 'package:arz8_task/data/models/country_model.dart';
-import 'package:arz8_task/data/repositories/country_repository.dart';
 import 'package:arz8_task/data/models/enums/region.dart';
+import 'package:arz8_task/data/repositories/country_repository.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
-  var countries = <CountryModel>[].obs;
-  var filteredCountries = <CountryModel>[].obs;
-  var selectedRegion = Region.Unknown.obs;
-  var isLoading = false.obs;
-  var searchText = ''.obs;
-
   final CountryRepository repository;
 
   HomeController(this.repository);
+
+  var countries = <CountryModel>[].obs;
+  var filteredCountries = <CountryModel>[].obs;
+  var isLoading = false.obs;
+
+  var searchText = ''.obs;
+  var selectedRegion = Rxn<Region>();
 
   @override
   void onInit() {
@@ -41,32 +42,32 @@ class HomeController extends GetxController {
     applyFilters();
   }
 
-  void clearRegionFilter() {
-    selectedRegion.value = Region.Unknown;
-    applyFilters();
-  }
-
   void applyFilters() {
     var list = countries.toList();
 
-    if (selectedRegion.value != Region.Unknown) {
-      final regionName =
-          selectedRegion.value.toString().split('.').last.toLowerCase();
-      list =
-          list
-              .where((c) => (c.region ?? '').toLowerCase() == regionName)
-              .toList();
+    if (selectedRegion.value != null && selectedRegion.value != Region.Unknown) {
+      list = list.where((c) =>
+      c.region.toLowerCase() == selectedRegion.value!.name.toLowerCase()).toList();
     }
 
-    final query = searchText.value.trim().toLowerCase();
-    if (query.isNotEmpty) {
-      list =
-          list.where((c) {
-            final name = c.name?.common?.toLowerCase() ?? '';
-            return name.contains(query);
-          }).toList();
+    if (searchText.value.isNotEmpty) {
+      list = list
+          .where((c) => c.name.common
+          .toLowerCase()
+          .contains(searchText.value.toLowerCase()))
+          .toList();
     }
 
     filteredCountries.assignAll(list);
+  }
+
+  Future<void> searchFromApi({String? name, String? region}) async {
+    try {
+      isLoading.value = true;
+      final result = await repository.search(name: name, region: region);
+      filteredCountries.assignAll(result);
+    } finally {
+      isLoading.value = false;
+    }
   }
 }
