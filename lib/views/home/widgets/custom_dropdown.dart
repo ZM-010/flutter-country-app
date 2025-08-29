@@ -1,9 +1,9 @@
+import 'package:arz8_task/data/models/enums/region.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:arz8_task/utils/app_colors.dart';
 import 'package:arz8_task/utils/dimens.dart';
-import 'package:arz8_task/models/enums/region.dart';
 
 class CustomDropdown extends StatelessWidget {
   final Region? value;

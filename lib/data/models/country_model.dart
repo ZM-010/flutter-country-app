@@ -1,14 +1,15 @@
-import 'package:arz8_task/models/capital_info_model.dart';
-import 'package:arz8_task/models/car_model.dart';
-import 'package:arz8_task/models/coat_of_arms_model.dart';
-import 'package:arz8_task/models/currency_model.dart';
-import 'package:arz8_task/models/demonyms_model.dart';
-import 'package:arz8_task/models/flag_model.dart';
-import 'package:arz8_task/models/idd_model.dart';
-import 'package:arz8_task/models/maps_model.dart';
-import 'package:arz8_task/models/name_model.dart';
-import 'package:arz8_task/models/postal_code_model.dart';
-import 'package:arz8_task/models/translation_model.dart';
+import 'package:arz8_task/data/models/capital_info_model.dart';
+import 'package:arz8_task/data/models/car_model.dart';
+import 'package:arz8_task/data/models/coat_of_arms_model.dart';
+import 'package:arz8_task/data/models/currency_model.dart';
+import 'package:arz8_task/data/models/demonyms_model.dart';
+import 'package:arz8_task/data/models/flag_model.dart';
+import 'package:arz8_task/data/models/idd_model.dart';
+import 'package:arz8_task/data/models/maps_model.dart';
+import 'package:arz8_task/data/models/name_model.dart';
+import 'package:arz8_task/data/models/postal_code_model.dart';
+import 'package:arz8_task/data/models/translation_model.dart';
+
 
 class CountryModel {
   final NameModel name;

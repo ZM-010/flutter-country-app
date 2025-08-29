@@ -1,6 +1,6 @@
-import 'package:arz8_task/models/country_model.dart';
-import 'package:arz8_task/models/enums/region.dart';
-import 'package:arz8_task/data/api/api_service.dart';
+import 'package:arz8_task/data/models/country_model.dart';
+import 'package:arz8_task/data/repositories/country_repository.dart';
+import 'package:arz8_task/data/models/enums/region.dart';
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
@@ -10,7 +10,9 @@ class HomeController extends GetxController {
   var isLoading = false.obs;
   var searchText = ''.obs;
 
-  final ApiService apiService = ApiService();
+  final CountryRepository repository;
+
+  HomeController(this.repository);
 
   @override
   void onInit() {
@@ -21,7 +23,7 @@ class HomeController extends GetxController {
   Future<void> loadCountries() async {
     try {
       isLoading.value = true;
-      final result = await apiService.getAllCountriesLight();
+      final result = await repository.getAllCountriesLight();
       countries.assignAll(result);
       filteredCountries.assignAll(result);
     } finally {
@@ -48,16 +50,21 @@ class HomeController extends GetxController {
     var list = countries.toList();
 
     if (selectedRegion.value != Region.Unknown) {
-      final regionName = selectedRegion.value.toString().split('.').last.toLowerCase();
-      list = list.where((c) => (c.region ?? '').toLowerCase() == regionName).toList();
+      final regionName =
+          selectedRegion.value.toString().split('.').last.toLowerCase();
+      list =
+          list
+              .where((c) => (c.region ?? '').toLowerCase() == regionName)
+              .toList();
     }
 
     final query = searchText.value.trim().toLowerCase();
     if (query.isNotEmpty) {
-      list = list.where((c) {
-        final name = c.name?.common?.toLowerCase() ?? '';
-        return name.contains(query);
-      }).toList();
+      list =
+          list.where((c) {
+            final name = c.name?.common?.toLowerCase() ?? '';
+            return name.contains(query);
+          }).toList();
     }
 
     filteredCountries.assignAll(list);

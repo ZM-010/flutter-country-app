@@ -1,4 +1,4 @@
-import 'package:arz8_task/models/country_model.dart';
+import 'package:arz8_task/data/models/country_model.dart';
 import 'package:arz8_task/utils/app_colors.dart';
 import 'package:arz8_task/views/shared/widgets/build_flag.dart';
 import 'package:flutter/material.dart';
